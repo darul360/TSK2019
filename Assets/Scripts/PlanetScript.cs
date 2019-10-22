@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class PlanetScript : MonoBehaviour {
 
-    public float gravity = -12;
     public GameObject cameraScript;
-    public GameObject playerMovementScript;
     public GameObject marker;
     private GameObject instance;
 
@@ -19,6 +17,5 @@ public class PlanetScript : MonoBehaviour {
 
         instance = Instantiate(marker, dir, Quaternion.identity);
         instance.tag = "clone";
-        Debug.Log("kordynaty" + gameObject.GetComponent<CalculateCoordinates>().coordinates);
     }
 }
