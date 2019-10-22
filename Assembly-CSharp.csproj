@@ -63,8 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CameraScript.cs" />
+    <Compile Include="Assets\Scripts\ParametersDisplay.cs" />
     <Compile Include="Assets\Scripts\PlanetScript.cs" />
     <Compile Include="Assets\Scripts\RotateEarth.cs" />
+    <Compile Include="Assets\Scripts\Spawn Satelite.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Łukasz/Documents/GitHub/TSK2019/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

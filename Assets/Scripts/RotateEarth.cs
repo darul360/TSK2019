@@ -35,6 +35,25 @@ public class RotateEarth : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 camera.transform.Translate(Vector3.right * Time.deltaTime*300);
             }
         }
-        
+
+
+        if (gameObject.tag == "UpArrow")
+        {
+            if (ispressed)
+            {
+                camera.transform.LookAt(new Vector3(0, 0, 0));
+                camera.transform.Translate(Vector3.up * Time.deltaTime * 300);
+            }
+        }
+
+        if (gameObject.tag == "DownArrow")
+        {
+            if (ispressed)
+            {
+                camera.transform.LookAt(new Vector3(0, 0, 0));
+                camera.transform.Translate(Vector3.down * Time.deltaTime * 300);
+            }
+        }
+
     }
 }
