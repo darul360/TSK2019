@@ -5,7 +5,6 @@ using UnityEngine;
 public class SelectSatelite : MonoBehaviour
 {
     public GameObject cameraScript;
-    public Shader shader;
     private List<GameObject> list;
 
     private void AddDescendantsWithTag(Transform parent, List<GameObject> list)
