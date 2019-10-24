@@ -11,9 +11,9 @@ public class SpawnSatelite : MonoBehaviour
     {
         GameObject receiver = GameObject.FindGameObjectWithTag("clone");
         sateliteDonor = GameObject.FindGameObjectWithTag("Satelite");
-        float posX = 2 * receiver.transform.position.x;
-        float posY = 2 * receiver.transform.position.y;
-        float posZ = 2 * receiver.transform.position.z;
+        float posX = 1.7f * receiver.transform.position.x;
+        float posY = 1.7f * receiver.transform.position.y;
+        float posZ = 1.7f * receiver.transform.position.z;
         Vector3 satelitePos = new Vector3(posX, posY, posZ);
         tempObject = Instantiate(sateliteDonor,satelitePos , Quaternion.identity);
         tempObject.tag = "SateliteClone";
