@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectSatelite : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class SelectSatelite : MonoBehaviour
     public Material off;
     public GameObject one, two, three, four, five;
     public bool IAMSelected = false;
+    public Text text;
 
     void OnMouseDown()
     {
@@ -24,6 +26,7 @@ public class SelectSatelite : MonoBehaviour
                 go.GetComponent<SelectSatelite>().four.GetComponent<Renderer>().material = off;
                 go.GetComponent<SelectSatelite>().five.GetComponent<Renderer>().material = off;
                 go.GetComponent<SelectSatelite>().IAMSelected = false;
+                text.text = "";
             }
         }
         one.GetComponent<Renderer>().material = on;
@@ -46,6 +49,7 @@ public class SelectSatelite : MonoBehaviour
                 four.GetComponent<Renderer>().material = off;
                 five.GetComponent<Renderer>().material = off;
                 IAMSelected = false;
+                text.text = "";
             }
         }
 

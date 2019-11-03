@@ -12,7 +12,6 @@ public class PlanetScript : MonoBehaviour {
     void OnMouseDown()
     {
         Vector3 dir = cameraScript.GetComponent<CameraScript>().hitLocation;
-        Debug.Log(dir);
         GameObject tempObj = GameObject.FindGameObjectWithTag("clone");
         if (tempObj != null)
         {
@@ -27,6 +26,7 @@ public class PlanetScript : MonoBehaviour {
         instance = Instantiate(marker, dir, Quaternion.identity);
         instance.tag = "clone";
         turnOnMarker.SetActive(true);
+        GetComponent<SendDataAnimation>().sendData();
 
 
     }
