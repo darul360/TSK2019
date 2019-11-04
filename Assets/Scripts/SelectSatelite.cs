@@ -12,6 +12,7 @@ public class SelectSatelite : MonoBehaviour
     public GameObject one, two, three, four, five;
     public bool IAMSelected = false;
     public Text text;
+    public GameObject ziemia;
 
     void OnMouseDown()
     {
@@ -57,13 +58,16 @@ public class SelectSatelite : MonoBehaviour
         {
             GameObject marker = GameObject.FindGameObjectWithTag("clone");
             if (Input.GetKey(KeyCode.A))
-                transform.RotateAround(marker.transform.position, marker.transform.up, 50 * Time.deltaTime);
+                transform.RotateAround(ziemia.transform.position, ziemia.transform.up, 50 * Time.deltaTime);
             if (Input.GetKey(KeyCode.D))
-                transform.RotateAround(marker.transform.position, -marker.transform.up, 50 * Time.deltaTime);
+                transform.RotateAround(ziemia.transform.position, -ziemia.transform.up, 50 * Time.deltaTime);
             if (Input.GetKey(KeyCode.W))
-                transform.RotateAround(marker.transform.position, marker.transform.right, 50 * Time.deltaTime);
+                transform.RotateAround(ziemia.transform.position, ziemia.transform.right, 50 * Time.deltaTime);
             if (Input.GetKey(KeyCode.S))
-                transform.RotateAround(marker.transform.position, -marker.transform.right, 50 * Time.deltaTime);
+                transform.RotateAround(ziemia.transform.position, -ziemia.transform.right, 50 * Time.deltaTime);
+
+            float dist = Vector3.Distance(Vector3.zero, transform.position);
+            text.text = dist.ToString();
         }
     }
 
