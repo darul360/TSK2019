@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using Accord.Math;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Calculacions : MonoBehaviour
 {
     float[] gu = new float[3];
+    float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
+    gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
 
     public object Matrix { get; private set; }
 
@@ -43,8 +46,8 @@ public class Calculacions : MonoBehaviour
 
 
             //% ***** Select initial guessed positions and clock bias *****
-            float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
-            gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
+           
+           
 
 
             //% Calculating rao the pseudo - range as shown in Equation(2.1) the 
@@ -86,41 +89,40 @@ public class Calculacions : MonoBehaviour
 
              //% **find delta rao
              //% includes clock bias
-                float[] drao = new float[rao.Count];
+                float[,] drao = new float[rao.Count,1];
                 for(int i=0; i< drao.Length; i++)
                 {
-                    drao[i] = pr[i] - (rao[i] - bu);
+                    drao[i,1] = pr[i] - (rao[i] + bu);
                 }
 
 
-                float[,] alpha2 = new float[alpha.LongLength,alpha.Length]; 
-                for (int i = 0; i < alpha.Length; i++)
+                float[,] pseudoInvers = alpha.PseudoInverse();
+                float[,] result = pseudoInvers.Multiply(drao.Inverse());
+
+                bu = bu + result[0, 4];
+
+                for(int k = 0; k < 3; k++)
                 {
-                    for (int j = 0; j < alpha.LongLength; j++)
-                    {
-                        alpha2[j, i] = alpha[i, j];
-                    }
+                    gu[k] = gu[k] + result[0, k];
                 }
 
-                float[,] c = new float[alpha.LongLength, alpha2.LongLength];
-                for (int i = 0; i < alpha.LongLength; i++)
+                error = result[0, 0] * result[0, 0] + result[0, 1] * result[0, 1] + result[0, 2] * result[0, 2];
+
+                for (int i = 0; i < satelites.Length; i++)
                 {
-                    for (int j = 0; j < alpha2.LongLength; j++)
-                    {
-                        c[i, j] = 0;
-                        for (int k = 0; k < alpha2.LongLength; k++)
-                        {
-                            c[i, j] += alpha[i, k] * alpha2[k, j];
-                        }
-                    }
+                    rao[i] =
+                    Mathf.Sqrt(
+                    Mathf.Pow((gu[0] - sp[i, 0]), 2) +
+                    Mathf.Pow((gu[1] - sp[i, 1]), 2) +
+                    Mathf.Pow((gu[2] - sp[i, 2]), 2)
+                    );
                 }
-
 
 
 
             }
 
-
+            Debug.Log(gu[0] + " " + gu[1] + " " + gu[2]);
 
 
 
@@ -130,7 +132,6 @@ public class Calculacions : MonoBehaviour
         
 
     }
-
 
 
     public double getAI1(double xi, double xu,double pi,double bu)
