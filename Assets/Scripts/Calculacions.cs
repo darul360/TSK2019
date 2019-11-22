@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Calculacions : MonoBehaviour
 {
-    // Start is called before the first frame update
+    float[] gu = new float[3];
+
+    public object Matrix { get; private set; }
+
     void Start()
     {
         
@@ -17,37 +20,117 @@ public class Calculacions : MonoBehaviour
         {
             GameObject[] satelites = GameObject.FindGameObjectsWithTag("SateliteClone");
             GameObject marker = GameObject.FindGameObjectWithTag("clone");
-            List<float> pseudoranges = new List<float>();
-            foreach(GameObject satelite in satelites)
+            List<float> rao = new List<float>();
+
+
+
+
+            /*ROBIE MACIERZ SP*/
+            float[,] sp = new float[satelites.Length, 3];
+            for (int g = 0; g < satelites.Length; g++)
             {
-                pseudoranges.Add(pseudorangeCalc(satelite.transform.position));
+                for (int h = 0; h < 3; h++)
+                {
+                    if (h == 0)
+                        sp[g, h] = satelites[g].transform.position.x;
+                    if (h == 1)
+                        sp[g, h] = satelites[g].transform.position.y;
+                    if (h == 2)
+                        sp[g, h] = satelites[g].transform.position.z;
+                }
+            }
+            /*------------------*/
+
+
+            //% ***** Select initial guessed positions and clock bias *****
+            float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
+            gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
+
+
+            //% Calculating rao the pseudo - range as shown in Equation(2.1) the 
+            //% clock bias is not included
+
+            for (int i = 0; i < satelites.Length; i++)
+            {
+                rao[i] =
+                Mathf.Sqrt(
+                Mathf.Pow((gu[0] - sp[i,0]), 2) +
+                Mathf.Pow((gu[1] - sp[i,1]), 2) +
+                Mathf.Pow((gu[2] - sp[i,2]), 2)
+                );
             }
 
+            float[] pr = new float[satelites.Length];
+            // Wylosowalem te wartości
+            for(int h = 0; h < pr.Length; h++)
+            {
+                float bias = Random.Range(0.0001f, 0.001f);
+                pr[h] = rao[h] - bias;
+            }
+
+            //% generate the fourth column of the alpha matrix in Eq.
+            float[,] alpha = new float[satelites.Length, 4];
+            for (int i = 0; i < alpha.Length; i++) alpha[i, 3] = 1;
+
+
             float error = 1;
-            while(error == 1)
+            while (error == 1)
             {
                 for(int i=0; i<satelites.Length; i++)
                 {
                     for(int j=0; j<3; j++)
                     {
-
+                        alpha[i, j] = (gu[j] - sp[i, j]) / rao[i];
                     }
                 }
+
+             //% **find delta rao
+             //% includes clock bias
+                float[] drao = new float[rao.Count];
+                for(int i=0; i< drao.Length; i++)
+                {
+                    drao[i] = pr[i] - (rao[i] - bu);
+                }
+
+
+                float[,] alpha2 = new float[alpha.LongLength,alpha.Length]; 
+                for (int i = 0; i < alpha.Length; i++)
+                {
+                    for (int j = 0; j < alpha.LongLength; j++)
+                    {
+                        alpha2[j, i] = alpha[i, j];
+                    }
+                }
+
+                float[,] c = new float[alpha.LongLength, alpha2.LongLength];
+                for (int i = 0; i < alpha.LongLength; i++)
+                {
+                    for (int j = 0; j < alpha2.LongLength; j++)
+                    {
+                        c[i, j] = 0;
+                        for (int k = 0; k < alpha2.LongLength; k++)
+                        {
+                            c[i, j] += alpha[i, k] * alpha2[k, j];
+                        }
+                    }
+                }
+
+
+
+
             }
+
+
+
+
+
+        }
           
            
-        }
+        
 
     }
 
-    public float pseudorangeCalc(Vector3 satelitePos)
-    {
-        return Mathf.Sqrt(
-            Mathf.Pow((0 - satelitePos.x), 2) +
-            Mathf.Pow((0 - satelitePos.y), 2) +
-            Mathf.Pow((0 - satelitePos.z), 2) 
-            );
-    }
 
 
     public double getAI1(double xi, double xu,double pi,double bu)
