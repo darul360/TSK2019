@@ -7,7 +7,7 @@ public class Calculacions : MonoBehaviour
 {
     float[] gu = new float[3];
     float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
-    gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
+    bool flag = false;
 
     public object Matrix { get; private set; }
 
@@ -19,12 +19,13 @@ public class Calculacions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (flag == false)
         if(GameObject.FindGameObjectsWithTag("SateliteClone").Length >= 4)
         {
             GameObject[] satelites = GameObject.FindGameObjectsWithTag("SateliteClone");
             GameObject marker = GameObject.FindGameObjectWithTag("clone");
-            List<float> rao = new List<float>();
-
+            float[] rao = new float[satelites.Length];
+            gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
 
 
 
@@ -73,11 +74,10 @@ public class Calculacions : MonoBehaviour
 
             //% generate the fourth column of the alpha matrix in Eq.
             float[,] alpha = new float[satelites.Length, 4];
-            for (int i = 0; i < alpha.Length; i++) alpha[i, 3] = 1;
 
 
             float error = 1;
-            while (error == 1)
+            while (error > 0.01)
             {
                 for(int i=0; i<satelites.Length; i++)
                 {
@@ -85,28 +85,28 @@ public class Calculacions : MonoBehaviour
                     {
                         alpha[i, j] = (gu[j] - sp[i, j]) / rao[i];
                     }
+                    alpha[i, 3] = 1;
                 }
 
              //% **find delta rao
              //% includes clock bias
-                float[,] drao = new float[rao.Count,1];
+                float[,] drao = new float[rao.Length,1];
                 for(int i=0; i< drao.Length; i++)
                 {
-                    drao[i,1] = pr[i] - (rao[i] + bu);
+                    drao[i,0] = pr[i] - (rao[i] + bu);
                 }
 
-
                 float[,] pseudoInvers = alpha.PseudoInverse();
-                float[,] result = pseudoInvers.Multiply(drao.Inverse());
+                float[,] result = drao.Multiply(pseudoInvers);
 
-                bu = bu + result[0, 4];
+                bu = bu + result[3, 0];
 
                 for(int k = 0; k < 3; k++)
                 {
-                    gu[k] = gu[k] + result[0, k];
+                    gu[k] = gu[k] + result[k, 0];
                 }
 
-                error = result[0, 0] * result[0, 0] + result[0, 1] * result[0, 1] + result[0, 2] * result[0, 2];
+                error = result[0, 0] * result[0, 0] + result[1, 0] * result[1, 0] + result[2, 0] * result[2, 0];
 
                 for (int i = 0; i < satelites.Length; i++)
                 {
@@ -118,12 +118,11 @@ public class Calculacions : MonoBehaviour
                     );
                 }
 
-
-
+                    Debug.Log(error);
             }
 
             Debug.Log(gu[0] + " " + gu[1] + " " + gu[2]);
-
+                flag = true;
 
 
         }
