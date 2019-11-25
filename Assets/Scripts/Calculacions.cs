@@ -6,7 +6,6 @@ using UnityEngine;
 public class Calculacions : MonoBehaviour
 {
     float[] gu = new float[3];
-    float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
     bool flag = false;
 
     public object Matrix { get; private set; }
@@ -25,46 +24,46 @@ public class Calculacions : MonoBehaviour
             GameObject[] satelites = GameObject.FindGameObjectsWithTag("SateliteClone");
             GameObject marker = GameObject.FindGameObjectWithTag("clone");
             float[] rao = new float[satelites.Length];
-            gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
 
 
 
             /*ROBIE MACIERZ SP*/
-            float[,] sp = new float[satelites.Length, 3];
-            for (int g = 0; g < satelites.Length; g++)
+            float[,] sp = new float[3, satelites.Length];
+            for (int i = 0; i < 3; i++)
             {
-                for (int h = 0; h < 3; h++)
+                for (int j = 0; j < satelites.Length; j++)
                 {
-                    if (h == 0)
-                        sp[g, h] = satelites[g].transform.position.x;
-                    if (h == 1)
-                        sp[g, h] = satelites[g].transform.position.y;
-                    if (h == 2)
-                        sp[g, h] = satelites[g].transform.position.z;
-                }
+                        if (i == 0)
+                            sp[i, j] = satelites[j].transform.position.x;
+                        if (i == 1)
+                            sp[i, j] = satelites[j].transform.position.y;
+                        if (i == 2)
+                            sp[i, j] = satelites[j].transform.position.z;
+                    }
             }
-            /*------------------*/
+                /*------------------*/
 
 
-            //% ***** Select initial guessed positions and clock bias *****
-           
-           
+                //% ***** Select initial guessed positions and clock bias *****
+                float x_guess = 0, y_guess = 0, z_guess = 0, bu = 0;
+                gu[0] = x_guess; gu[1] = y_guess; gu[2] = z_guess;
 
 
-            //% Calculating rao the pseudo - range as shown in Equation(2.1) the 
-            //% clock bias is not included
+                //% Calculating rao the pseudo - range as shown in Equation(2.1) the 
+                //% clock bias is not included
 
-            for (int i = 0; i < satelites.Length; i++)
+                for (int i = 0; i < satelites.Length; i++)
             {
                 rao[i] =
                 Mathf.Sqrt(
-                Mathf.Pow((gu[0] - sp[i,0]), 2) +
-                Mathf.Pow((gu[1] - sp[i,1]), 2) +
-                Mathf.Pow((gu[2] - sp[i,2]), 2)
+                Mathf.Pow((gu[0] - sp[0, i]), 2) +
+                Mathf.Pow((gu[1] - sp[1, i]), 2) +
+                Mathf.Pow((gu[2] - sp[2, i]), 2)
                 );
             }
 
-            float[] pr = new float[satelites.Length];
+            float[] pr = new float[satelites.Length]; /// czy nie trzeba tego transponować?
+
             // Wylosowalem te wartości
             for(int h = 0; h < pr.Length; h++)
             {
@@ -72,8 +71,16 @@ public class Calculacions : MonoBehaviour
                 pr[h] = rao[h] - bias;
             }
 
-            //% generate the fourth column of the alpha matrix in Eq.
+            //% generate the fourth column of the alpha matrix in Eq.         /// czy to jest oke?
             float[,] alpha = new float[satelites.Length, 4];
+
+                for(int i=0; i<satelites.Length; i++)
+                {
+                    for(int j=0; j<4; j++)
+                    {
+                        alpha[i,j] = 1;
+                    }
+                }
 
 
             float error = 1;
@@ -83,38 +90,38 @@ public class Calculacions : MonoBehaviour
                 {
                     for(int j=0; j<3; j++)
                     {
-                        alpha[i, j] = (gu[j] - sp[i, j]) / rao[i];
+                        alpha[i, j] = (gu[j] - sp[j, i]) / rao[i];
                     }
-                    alpha[i, 3] = 1;
+                    //alpha[i, 3] = 1;
                 }
 
              //% **find delta rao
              //% includes clock bias
-                float[,] drao = new float[rao.Length,1];
+                float[] drao = new float[rao.Length];
                 for(int i=0; i< drao.Length; i++)
                 {
-                    drao[i,0] = pr[i] - (rao[i] + bu);
+                    drao[i] = pr[i] - (rao[i] + bu);
                 }
 
                 float[,] pseudoInvers = alpha.PseudoInverse();
-                float[,] result = drao.Multiply(pseudoInvers);
+                float[] result = pseudoInvers.Multiply(drao);
 
-                bu = bu + result[3, 0];
+                bu = bu + result[3];
 
                 for(int k = 0; k < 3; k++)
                 {
-                    gu[k] = gu[k] + result[k, 0];
+                    gu[k] = gu[k] + result[k];
                 }
 
-                error = result[0, 0] * result[0, 0] + result[1, 0] * result[1, 0] + result[2, 0] * result[2, 0];
+                error = result[0] * result[0] + result[1] * result[1] + result[2] * result[2];
 
                 for (int i = 0; i < satelites.Length; i++)
                 {
                     rao[i] =
                     Mathf.Sqrt(
-                    Mathf.Pow((gu[0] - sp[i, 0]), 2) +
-                    Mathf.Pow((gu[1] - sp[i, 1]), 2) +
-                    Mathf.Pow((gu[2] - sp[i, 2]), 2)
+                    Mathf.Pow((gu[0] - sp[0, i]), 2) +
+                    Mathf.Pow((gu[1] - sp[1, i]), 2) +
+                    Mathf.Pow((gu[2] - sp[2, i]), 2)
                     );
                 }
 
@@ -127,9 +134,6 @@ public class Calculacions : MonoBehaviour
 
         }
           
-           
-        
-
     }
 
 
