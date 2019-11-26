@@ -62,7 +62,7 @@ public class Calculacions : MonoBehaviour
                 );
             }
 
-            float[] pr = new float[satelites.Length]; /// czy nie trzeba tego transponować?
+            float[] pr = new float[satelites.Length]; 
 
             // Wylosowalem te wartości
             for(int h = 0; h < pr.Length; h++)
@@ -71,7 +71,7 @@ public class Calculacions : MonoBehaviour
                 pr[h] = rao[h] - bias;
             }
 
-            //% generate the fourth column of the alpha matrix in Eq.         /// czy to jest oke?
+            //% generate the fourth column of the alpha matrix in Eq.    
             float[,] alpha = new float[satelites.Length, 4];
 
                 for(int i=0; i<satelites.Length; i++)
@@ -125,11 +125,8 @@ public class Calculacions : MonoBehaviour
                     );
                 }
 
-                    Debug.Log(error);
             }
 
-            Debug.Log(gu[0] + " " + gu[1] + " " + gu[2]);
-                flag = true;
 
 
         }

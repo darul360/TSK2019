@@ -57,14 +57,27 @@ public class SelectSatelite : MonoBehaviour
         if (IAMSelected )
         {
             GameObject marker = GameObject.FindGameObjectWithTag("clone");
+            bool flag = false;
             if (Input.GetKey(KeyCode.A))
+               if(Vector3.Distance(marker.transform.position, transform.transform.position)  < 23400)
                 transform.RotateAround(ziemia.transform.position, ziemia.transform.up, 50 * Time.deltaTime);
+                else
+                    transform.RotateAround(ziemia.transform.position, -ziemia.transform.up, 10);
             if (Input.GetKey(KeyCode.D))
-                transform.RotateAround(ziemia.transform.position, -ziemia.transform.up, 50 * Time.deltaTime);
+                if (Vector3.Distance(marker.transform.position, transform.transform.position) < 23400)
+                    transform.RotateAround(ziemia.transform.position, -ziemia.transform.up, 50 * Time.deltaTime);
+            else
+                    transform.RotateAround(ziemia.transform.position, ziemia.transform.up, 10);
             if (Input.GetKey(KeyCode.W))
-                transform.RotateAround(ziemia.transform.position, ziemia.transform.right, 50 * Time.deltaTime);
+                if (Vector3.Distance(marker.transform.position, transform.transform.position) < 23400)
+                    transform.RotateAround(ziemia.transform.position, ziemia.transform.right, 50 * Time.deltaTime);
+            else
+                    transform.RotateAround(ziemia.transform.position, -ziemia.transform.right, 10);
             if (Input.GetKey(KeyCode.S))
-                transform.RotateAround(ziemia.transform.position, -ziemia.transform.right, 50 * Time.deltaTime);
+                if (Vector3.Distance(marker.transform.position, transform.transform.position) < 23400)
+                    transform.RotateAround(ziemia.transform.position, -ziemia.transform.right, 50 * Time.deltaTime);
+            else
+                    transform.RotateAround(ziemia.transform.position, ziemia.transform.right, 10);
 
             float dist = Vector3.Distance(Vector3.zero, transform.position);
             text.text = dist.ToString();
